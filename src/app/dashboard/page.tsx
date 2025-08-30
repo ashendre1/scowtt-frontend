@@ -15,7 +15,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for Google OAuth callback params
+
     const token = searchParams.get('token');
     const username = searchParams.get('username');
     const email = searchParams.get('email');
@@ -24,7 +24,7 @@ export default function Dashboard() {
     const funFactFromUrl = searchParams.get('funFact');
 
     if (token) {
-      // Store Google OAuth data
+
       localStorage.setItem('token', token);
       const googleUser = { 
         username, 
@@ -35,29 +35,24 @@ export default function Dashboard() {
       localStorage.setItem('user', JSON.stringify(googleUser));
       setUser(googleUser);
       
-      // Set fun fact from URL if available (first login)
       if (funFactFromUrl) {
         setFunFact(decodeURIComponent(funFactFromUrl));
       }
       
-      // Clean URL after processing
       window.history.replaceState({}, document.title, window.location.pathname);
     } else {
-      // Load existing user data from localStorage
       const storedUser = localStorage.getItem('user');
       const storedToken = localStorage.getItem('token');
       
       if (storedUser && storedToken) {
         const userData = JSON.parse(storedUser);
         setUser(userData);
-        
-        // If user has favorite movie, ALWAYS get a fresh fun fact on page refresh
+
         if (userData.favoriteMovie) {
           setIsLoadingFact(true);
           getNewFunFact();
         }
       } else {
-        // For regular login, create a basic user object
         const basicUser = {
           username: 'User',
           email: null,
@@ -71,7 +66,6 @@ export default function Dashboard() {
     setLoading(false);
   }, [searchParams]);
 
-  // Reset image error state when user changes
   useEffect(() => {
     setImageError(false);
     setImageLoaded(false);
@@ -97,7 +91,6 @@ export default function Dashboard() {
       const data = await res.json();
       
       if (res.ok) {
-        // Update user with favorite movie and display fun fact
         const updatedUser = { ...user, favoriteMovie: favoriteMovie.trim() };
         setUser(updatedUser);
         localStorage.setItem('user', JSON.stringify(updatedUser));
@@ -116,7 +109,6 @@ export default function Dashboard() {
     }
   };
 
-  // Function to get a new fun fact (called on page refresh)
   const getNewFunFact = async () => {
     try {
       const token = localStorage.getItem('token');
