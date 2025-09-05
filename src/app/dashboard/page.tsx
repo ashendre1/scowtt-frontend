@@ -22,6 +22,7 @@ export default function Dashboard() {
     const photo = searchParams.get('photo');
     const favoriteMovieParam = searchParams.get('favoriteMovie');
     const funFactFromUrl = searchParams.get('funFact');
+    console.log("refresh")
 
     if (token) {
 
@@ -71,6 +72,30 @@ export default function Dashboard() {
     setImageLoaded(false);
   }, [user?.photo]);
 
+  useEffect(() => {
+  const storedUser = localStorage.getItem('user');
+  const storedToken = localStorage.getItem('token');
+  console.log("empty useEFfect")
+  if (storedUser && storedToken) {
+    const userData = JSON.parse(storedUser);
+    
+    const mappedUser = {
+      id: userData.id,
+      username: userData.username, 
+      email: userData.email,
+      photo: userData.photo || null,
+      favoriteMovie: userData.movie || userData.favoriteMovie || ''
+    };
+    
+    setUser(mappedUser);
+    if (userData.funFact) {
+      setFunFact(userData.funFact);
+    }
+    
+    localStorage.setItem('user', JSON.stringify(mappedUser));
+  }
+}, []);
+
   const handleSubmitFavoriteMovie = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!favoriteMovie.trim()) return;
@@ -95,7 +120,7 @@ export default function Dashboard() {
         setUser(updatedUser);
         localStorage.setItem('user', JSON.stringify(updatedUser));
         setFunFact(data.funFact);
-        setFavoriteMovie('');
+        //setFavoriteMovie('');
       } else {
         alert(data.error || 'Failed to get fun fact');
         if (res.status === 401) {
@@ -218,7 +243,7 @@ export default function Dashboard() {
             <h3 className="section-title">Account Information</h3>
             <div className="info-grid">
               <div className="info-item">
-                <label>Username:</label>
+                <label>Display Name:</label>
                 <span>{user.username || 'N/A'}</span>
               </div>
               {user.email && (
@@ -230,10 +255,6 @@ export default function Dashboard() {
               <div className="info-item">
                 <label>Favorite Movie:</label>
                 <span>{user.favoriteMovie || 'N/A'}</span>
-              </div>
-              <div className="info-item">
-                <label>Account Type:</label>
-                <span>{user.email ? 'Google Account' : 'Regular Account'}</span>
               </div>
             </div>
           </div>
@@ -278,16 +299,9 @@ export default function Dashboard() {
                     <div className="loading-fact">
                       <p>Loading a new fun fact...</p>
                     </div>
-                  ) : funFact ? (
+                  ) : (
                     <div className="fun-fact-content">
                       <p className="fun-fact-text">{funFact}</p>
-                      <div className="refresh-hint">
-                        <p className="hint-text">💡 Refresh the page to get a new fun fact!</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="no-fun-fact">
-                      <p>No fun fact available. Try refreshing the page!</p>
                     </div>
                   )}
                 </div>

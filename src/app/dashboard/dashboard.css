@@ -71,12 +71,13 @@
   border-radius: 50%;
   object-fit: cover;
   border: 3px solid #3498db;
-  background-color: #f0f0f0; /* Fallback background */
+  background-color: #f0f0f0; 
+  opacity: 1;
   transition: opacity 0.3s;
 }
 
 .profile-image.loading {
-  opacity: 0.5;
+  opacity: 1;
 }
 
 .profile-image.loaded {
